@@ -1,0 +1,9 @@
+{
+    "directory_name": "",
+    "project_name": "",
+    "mongo_user":"mongo_user",
+    "mongo_password":"mongo_password",
+    "mongo_express_user":"mongo_express_user",
+    "mongo_express_pw": "mongo_express_pw",
+    "mongo_db_name":"sacred"
+}

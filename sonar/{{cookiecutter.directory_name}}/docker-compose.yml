@@ -1,0 +1,45 @@
+version: '3.3'
+        
+services:
+  devenv:
+    build: ./docker/devenv
+    ports: 
+       - 127.0.0.1:8081:8888
+    restart: unless-stopped
+    env_file: .env
+    volumes: 
+       - "./src:/home/tars/src:Z"
+       - "./notebooks:/home/tars/notebooks:Z"
+       - "./experiments:/home/tars/experiments:Z"
+       - "./data:/home/tars/data:Z"
+    entrypoint: jupyter notebook --ip=0.0.0.0
+    
+  mongo:
+    image: mongo
+    ports:
+      - 127.0.0.1:27019:27019
+    restart: unless-stopped
+    env_file: .env
+    
+
+  mongo-express:
+    image: mongo-express
+    ports:
+        - 127.0.0.1:8753:8081
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: $MONGO_INITDB_ROOT_USERNAME
+      ME_CONFIG_MONGODB_ADMINPASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+    depends_on:
+      - mongo
+
+  omniboard:
+    image: vivekratnavel/omniboard:latest
+    command: ["--mu", "mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@mongo:27017/$MONGO_DATABASE?authSource=admin"]
+    ports:
+      - 127.0.0.1:10592:9000
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - mongo
